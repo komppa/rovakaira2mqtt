@@ -1,0 +1,50 @@
+########################################################
+########################################################
+
+HOST
+online.rvk.pset.fi
+
+HEADERS (at least the cookie header with kc-access & kc-state are mandatory)
+Cookie: kc-access=<kcAccess>; kc-state=<kcState>
+Pragma: no-cache
+Cache-Control: no-cache
+
+########################################################
+########################################################
+
+To get monthly usage
+
+ENDPOINT
+/api/electricity/month
+
+QUERY
+start   "2022-01"
+end     "2022-12"
+mp      "RVK000_1234567"
+
+########################################################
+
+To get days
+
+ENDPOINT 
+/api/electricity/day
+
+QUERY
+start   "2022-01-01"
+end     "2022-01-31"
+mp      "RVK000_1234567"
+
+########################################################
+
+To get hours
+
+ENDPOINT
+/api/electricity/hour
+
+QUERY
+(start and end dates to be the same)
+start   "2022-01-02"
+end     "2022-01-02"
+mp      "RVK000_1234567"
+
+########################################################
