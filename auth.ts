@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer'
+import { Page } from 'puppeteer'
 
 
 const LOGIN_PORTAL_ADDRESS = 'https://online.rvk.pset.fi/auth/realms/assari/protocol/openid-connect/auth?client_id=assari&redirect_uri=https://online.rvk.pset.fi/kirjaudu&response_type=code&scope=openid+email+profile'
@@ -9,32 +9,25 @@ export interface kcTokens {
     kcState: string
 }
 
-export const authenticate = async (username: string, password: string): Promise<kcTokens> => {
+export const authenticate = async (page: Page, username: string, password: string): Promise<any> => {
+    return new Promise(async (res, _) => {
 
-    // Create new headless browser for logging in
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
-  
-    await page.goto(LOGIN_PORTAL_ADDRESS);
+        await page.goto(LOGIN_PORTAL_ADDRESS);
 
-    // Type credentials
-    await page.type('#username', username)
-    await page.type('#password', password)
-    
-    // Click login button
-    await page.click('#kc-login')
+        // Type credentials
+        await page.type('#username', username)
+        await page.type('#password', password)
+        
+        // Click login button
 
-    const cookies = await page.cookies()
+        await Promise.all([
+            page.click('#kc-login'),
+            page.waitForNavigation({waitUntil: 'networkidle2'})
+        ])
 
-    // Get tokens from cookies
-    const kcState = cookies.filter((c: any) => c.name === 'kc-state')[0].value
-    const kcAccess = cookies.filter((c: any) => c.name === 'kc-access')[0].value
+        const cookies = await page.cookies()
 
-    await browser.close()
+        res(cookies)
 
-    return {
-        kcAccess,
-        kcState
-    }
-
+    })
 }
